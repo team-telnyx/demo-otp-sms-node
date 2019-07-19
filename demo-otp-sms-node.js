@@ -1,4 +1,4 @@
-// ================================================ Telnyx Media Forking ================================================
+// ================================================ Telnyx OTP SMS DEMO ================================================
 
 // Description:
 // This simple app exposes two API instructions that enable OTP (One Time Password). One
