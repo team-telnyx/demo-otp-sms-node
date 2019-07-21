@@ -1,5 +1,5 @@
-# Telnyx Media Forking Demo 
-Telnyx Media Forking demo built on Call Control and node.js.
+# Telnyx OTP SMS Demo 
+Telnyx OTP SMS demo built on Telnyx Messaging APIs and node.js.
 
 ## Front End
 To facilitate usage of this Telnyx Media Forking demo we are including a set of `HTML` files that simulate the typical Two-Factor-Authentication or One-Time-Password flow:
