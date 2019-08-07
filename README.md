@@ -12,13 +12,8 @@ In this tutorial, you’ll learn how to:
 
 - [Prerequisites](#prerequisites)
 - [Send an SMS](#send-an-sms)
-  - [Using npm scripts](#npm-run-scripts)
-  - [Using Docker](#development-with-docker)
-  - [Using file generators](#using-generators)
-  - [Adding examples for a new language](#adding-examples-for-a-new-language)
 - [Generating the Token](#generating-the-token)
 - [Temporarily Storing the Tokens](#temporarily-storing-the-tokens)
-  - [What's in production?](#associating-production-with-commits)
 - [Requesting Tokens](#requesting-tokens)
 - [Lightning-Up the Application](#lightning-up-the-application)
 
@@ -143,7 +138,7 @@ function cc_send_sms(f_dest, f_orig, f_message, f_callback) {
 
 There are several aspects of this function that deserve some attention:
 
-- Setting the Post Request Headers: following the Telnyx Messaging API convention, the first thing to be set are POST Request headers to be used. That would include the Profile Secret defined earlier:
+Setting the Post Request Headers: following the Telnyx Messaging API convention, the first thing to be set are POST Request headers to be used. That would include the Profile Secret defined earlier:
 ```js
 var l_headers = {
     'Content-Type': 'application/json',
@@ -151,7 +146,7 @@ var l_headers = {
 }
 ```
 
-- US/CA Destination vs International Destinations: following local regulations Telnyx Messaging API allows international destinations to have an alphanumeric sender (the SMS ‘from’ value) but not for US and Canada. For the latter you may use a Long/Short Code E164 formatted number that you can enforce in the corresponding Messaging Profile used (Mission Control Portal).
+US/CA Destination vs International Destinations: following local regulations Telnyx Messaging API allows international destinations to have an alphanumeric sender (the SMS ‘from’ value) but not for US and Canada. For the latter you may use a Long/Short Code E164 formatted number that you can enforce in the corresponding Messaging Profile used (Mission Control Portal).
 Because of the difference between US/CA and International destinations, we have different parameters being set as the ‘from’ value. The ‘to’ value will consume the regular E164 formatted number that was passed along with the function call, as well as the ‘body’ of the message (that will be the token message).
 For US/CA destinations, we’re omitting the ‘from’ parameter, so it will force the API to use a Long/Short Code E164 formatted number from the Telnyx pool of numbers:
 ```js
@@ -185,7 +180,7 @@ For international destinations, we’re enforcing the alphanumeric sender id tha
 }
 ```
 
-- Calling the Telnyx SMS Messaging API: Having the request  `headers` and `options`/`body` set, the only thing left is to execute the POST Request to send the message. For that we’re making use of the Node.JS `request` module:
+Calling the Telnyx SMS Messaging API: Having the request  `headers` and `options`/`body` set, the only thing left is to execute the POST Request to send the message. For that we’re making use of the Node.JS `request` module:
 ```js
 request.post(options,function(err,resp,body){
 
@@ -234,12 +229,12 @@ To keep this example as simple as possible we’re temporarily storing newly gen
 
 Requesting Tokens is naturally part of a Two-Factor Authentication process associated with some transaction or SMS device validation. 
 
-1. To exemplify this process we created a simple API call that can be integrated into any HTML static web-page with a form. For this we’ll use `express`:
+To exemplify this process we created a simple API call that can be integrated into any HTML static web-page with a form. For this we’ll use `express`:
 ``` shell
 $ npm install request --save
 ```
 
-2. With `express` we can create an API wrapper that uses HTTP GET to call our Request Token method:
+With `express` we can create an API wrapper that uses HTTP GET to call our Request Token method:
 ```js
 rest.get('/'+g_appName+'/gettoken', function (req, res) {
    fs.readFile( "PATH_TO_JSON/tokens.json", 'utf8', function (err, data) {
@@ -274,37 +269,37 @@ rest.get('/'+g_appName+'/gettoken', function (req, res) {
 ### Understanding the Get-Token method
 There are several aspects of this method that deserve some attention:
 
-- Reading the Token’s JSON File: simply opening up the JSON file to be able to temporarily save the new token and destination number on it
+Reading the Token’s JSON File: simply opening up the JSON file to be able to temporarily save the new token and destination number on it
 ```js
 fs.readFile( "PATH_TO_JSON/tokens.json", 'utf8', function (err, data) 
 ...
 ```
 
-- Getting the Destination Number: this piece of code assumes the HTTP GET request will have a `form` with the number introduced by the token request entity. So we’ll need to extract that number here:
+Getting the Destination Number: this piece of code assumes the HTTP GET request will have a `form` with the number introduced by the token request entity. So we’ll need to extract that number here:
 ```js
 var l_dest_number = req.query.number;
 ```
 
-- Generating the Token: we can generate the token instantly by calling out our function and indicating that we want a 4 character token:
+Generating the Token: we can generate the token instantly by calling out our function and indicating that we want a 4 character token:
 ```js
 var l_token = get_randomTokenHex(4);
 ```
 
-- Adding the Token to the List: once we have the token we’ll add it to the temporary JSON list so we can check it later for validation:
+Adding the Token to the List: once we have the token we’ll add it to the temporary JSON list so we can check it later for validation:
 ```js
 obj = JSON.parse(data); 
 
-        obj[l_token] = {dest_number:l_dest_number,
-                        last_updated:get_timestamp,
-                        token:l_token};
+obj[l_token] = {dest_number:l_dest_number,
+                last_updated:get_timestamp,
+                token:l_token};
 
-        var json = JSON.stringify(obj); 
-       fs.writeFile("PATH_TO_JSON/tokens.json", json, 'utf8', 
-            function (err, data)
+var json = JSON.stringify(obj); 
+fs.writeFile("PATH_TO_JSON/tokens.json", json, 'utf8', 
+    function (err, data)
 ...
 ```
 
-- Sending the SMS Token: as part of the previous callback, we’re sending out the message with the Token by calling our SEND-SMS function. As part of that call we’re adding: the destination number, “Telnyx OTP” as the alphanumeric origin (the ‘from’ value), and the message itself that will be 'Your Telnyx token is ####“. 
+Sending the SMS Token: as part of the previous callback, we’re sending out the message with the Token by calling our SEND-SMS function. As part of that call we’re adding: the destination number, “Telnyx OTP” as the alphanumeric origin (the ‘from’ value), and the message itself that will be 'Your Telnyx token is ####“. 
 Please note that in this call we’re adding the alphanumeric value as default, but that would only be used by international destinations as explained previously. If the destination is US/CA this parameter will be ignored.
 ```js
  cc_send_sms(l_dest_number,
@@ -320,7 +315,7 @@ Please note that in this call we’re adding the alphanumeric value as default, 
 res.end();
 });
 ```
-- Also, not that we’re consuming the SMS attempt result and returning different results as responses. Assuming you’ll be working with static HTML web-pages one could point to: (1) the Token validation web-page if successful, (2) or to the Error page if applicable. (3) You should receive the SMS Token as follows:
+Also, not that we’re consuming the SMS attempt result and returning different results as responses. Assuming you’ll be working with static HTML web-pages one could point to: (1) the Token validation web-page if successful, (2) or to the Error page if applicable. (3) You should receive the SMS Token as follows:
 
 <p align="center">
     <img src="https://raw.githubusercontent.com/team-telnyx/demo-otp-sms-node/master/sms-otp-example.png" width="50%" height="50%" title="sms_otp_example">
@@ -331,7 +326,7 @@ res.end();
 
 Once you have the token, the next step is the validation. For that we’ll follow a similar process as the previous, but this time receiving the Token to validate instead.
 
-1. To exemplify this process we created a simple API call that abstract the request and can be integrated into any HTML static web-page with a form. For this we’ll use `express` again. With it we can create an API wrapper that uses HTTP GET to call our Validate Token method:
+To exemplify this process we created a simple API call that abstract the request and can be integrated into any HTML static web-page with a form. For this we’ll use `express` again. With it we can create an API wrapper that uses HTTP GET to call our Validate Token method:
 ```js
 rest.get('/'+g_appName+'/checktoken', function (req, res) {
     
@@ -350,22 +345,22 @@ rest.get('/'+g_appName+'/checktoken', function (req, res) {
         // token is valid - yes
         if(obj.hasOwnProperty(l_token)){
            
-                // delete token from db
-                delete obj[l_token];
-                var l_json = JSON.stringify(obj);
-    
-                fs.writeFile("PATH_TO_JSON/tokens.json", l_json, 'utf8', 
-                   function (err, data) {
-                   if (err) {
-                      return console.error(err.message);
-                   }    
+            // delete token from db
+            delete obj[l_token];
+            var l_json = JSON.stringify(obj);
 
-                  res.writeHead(302, {'Location': ’DOMAIN/ok.html'});
-                  res.end();
+            fs.writeFile("PATH_TO_JSON/tokens.json", l_json, 'utf8', 
+               function (err, data) {
+               if (err) {
+                  return console.error(err.message);
+               }    
+
+              res.writeHead(302, {'Location': ’DOMAIN/ok.html'});
+              res.end();
             });
         } 
         
-        // token is NOT valid - no
+        // token is NOT valid 
         else {     
                 res.writeHead(302, {'Location': ’DOMAIN/nok.html'});  
                 res.end();   
@@ -378,18 +373,18 @@ rest.get('/'+g_appName+'/checktoken', function (req, res) {
 
 There are several aspects of this method that deserve some attention:
 
-- Reading the Token’s JSON File: similar to get token, simply opening up the JSON file to be able to temporarily save the new token and destination number on it:
+Reading the Token’s JSON File: similar to get token, simply opening up the JSON file to be able to temporarily save the new token and destination number on it:
 ```js
 fs.readFile( "PATH_TO_JSON/tokens.json", 'utf8', function (err, data) 
 ...
 ```
 
-- Getting the Token to Validate: this piece of code assumes the HTTP GET request will be having a `form` with the received Token introduced. So we will need to extract that value here:
+Getting the Token to Validate: this piece of code assumes the HTTP GET request will be having a `form` with the received Token introduced. So we will need to extract that value here:
 ```js
 var l_dest_number  = req.query.number;
 ```
 
-- Validating the Token: once we have the token we will validate it. In this tutorial we made the process simple by simply checking if the Token value exists as a key in the temporary JSON file.
+Validating the Token: once we have the token we will validate it. In this tutorial we made the process simple by simply checking if the Token value exists as a key in the temporary JSON file.
 ```js
 if(obj.hasOwnProperty(l_token)){
 ...
