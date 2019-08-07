@@ -16,6 +16,7 @@ In this tutorial, you’ll learn how to:
 - [Temporarily Storing the Tokens](#temporarily-storing-the-tokens)
 - [Requesting Tokens](#requesting-tokens)
 - [Lightning-Up the Application](#lightning-up-the-application)
+- [Application Front-End](#application-front-end)
 
 
 ---
@@ -318,7 +319,7 @@ res.end();
 Also, not that we’re consuming the SMS attempt result and returning different results as responses. Assuming you’ll be working with static HTML web-pages one could point to: (1) the Token validation web-page if successful, (2) or to the Error page if applicable. (3) You should receive the SMS Token as follows:
 
 <p align="center">
-    <img src="https://raw.githubusercontent.com/team-telnyx/demo-otp-sms-node/master/sms-otp-example.png" width="50%" height="50%" title="sms_otp_example">
+    <img src="https://raw.githubusercontent.com/team-telnyx/demo-otp-sms-node/master/examples/sms-otp-example.png" width="50%" height="50%" title="sms_otp_example">
 </p>
 
 
@@ -418,7 +419,16 @@ var server = rest.listen(8081, function () {
 })
 ```
 
+## Application Front-End
 
+In this application source code we are making use of static HTML pages as the front end of our application. Through those pages the user can interact with the application by requesting the OTP token and submit it for validation.
+
+Sample pages for this purpose can be found in [interface](https://github.com/team-telnyx/demo-otp-sms-node/tree/master/interface) directory.
+
+
+<p align="center">
+    <img src="https://raw.githubusercontent.com/team-telnyx/demo-otp-sms-node/master/examples/front-end.png" title="sms_otp_example">
+</p>
 
 
 
