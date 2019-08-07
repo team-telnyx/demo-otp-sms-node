@@ -1,5 +1,5 @@
-# Telnyx Media Forking Demo
-Telnyx Media Forking demo built on Call Control and node.js.
+# Telnyx OTP SMS Demo
+Telnyx OTP SMS demo built on Telnyx Messaging APIs and node.js.
 
 
 In this tutorial, you’ll learn how to:
